@@ -24,9 +24,9 @@
 #include "php.h"
 #include "Zend/zend_exceptions.h"
 
-#include "lua.h"                                                                
+#include "lua.h"
 #include "lua_closure.h"
-#include "lauxlib.h"                                                            
+#include "lauxlib.h"
 #include "lualib.h"
 
 #include "php_lua.h"
@@ -39,6 +39,9 @@ static zend_object_handlers lua_closure_handlers;
 /** {{{ ARG_INFO
  *
  */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_lua_invoke, 0, 0, 1)
 	ZEND_ARG_INFO(0, arg)
 	ZEND_ARG_INFO(0, ...)
@@ -113,7 +116,7 @@ PHP_METHOD(lua_closure, invoke) {
 			efree(arguments);
 		}
 		lua_pop(L, lua_gettop(L) - bp);
-		zend_throw_exception_ex(NULL, 0, 
+		zend_throw_exception_ex(NULL, 0,
 				"call to lua function %s failed", lua_tostring(L, -1));
 		return;
 	}
@@ -145,7 +148,7 @@ PHP_METHOD(lua_closure, invoke) {
 /* {{{ lua_class_methods[]
  */
 zend_function_entry lua_closure_methods[] = {
-	PHP_ME(lua_closure, __construct,		NULL,  					ZEND_ACC_PRIVATE|ZEND_ACC_CTOR)
+	PHP_ME(lua_closure, __construct,		arginfo_void,  			ZEND_ACC_PRIVATE|ZEND_ACC_CTOR)
 	PHP_ME(lua_closure, invoke,				arginfo_lua_invoke,  	ZEND_ACC_PUBLIC)
 	PHP_MALIAS(lua_closure, __invoke, invoke, arginfo_lua_invoke,	ZEND_ACC_PUBLIC)
 	PHP_FE_END
@@ -171,7 +174,7 @@ zend_object *php_lua_closure_create_object(zend_class_entry *ce) /* {{{ */
 
 	zend_object_std_init(zobj, ce);
 	zobj->handlers = &lua_closure_handlers;
-	
+
 	return zobj;
 } /* }}} */
 
